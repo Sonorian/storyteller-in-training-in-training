@@ -1,0 +1,13 @@
+A simple discord bot that adds day dividers in selected channels, for use in Blood on the Clocktower games. 
+
+Commands:
+!setup (admin) : allows channels and categories to be added and removed. !!WARNING!! Make sure the first time this is used is in an admin-only channel. All admin commands, including this one, will only be accessible from that channel. Note that any user can use any command, as long as they can send messages in the channel. 
+!add : use in any channel after using !setup. It is added to the list of channels to be divided. 
+!remove : use in a channel that has already been added, after using !setup. It is removed from the list. 
+!addcat : use in a channel that is part of a category after using !setup. All channels in that category are added to the list. 
+!done (admin) : use after !status. Stops !add, !remove, !addcat from functioning. Allows !divide, !newgame, !reset. 
+!divide (admin) : use after !done. Puts up a New Game or Day Divider in each marked category. Automatically counts up. 
+!newgame (admin) : use after !done. Sets the day to 0, making the next !divide send New Game dividers. 
+!reset [integer] (admin) : use after !done. Sets the day, and the next !divide, to [integer]. Note that it cannot handle days >9. 
+
+Questions? Complaints? Want to whine about storytellers? Message Sonorian on git or @Sonorian#5165 on discord. 
