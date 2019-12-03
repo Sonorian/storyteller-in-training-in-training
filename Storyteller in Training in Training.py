@@ -86,4 +86,4 @@ async def on_message(message):#looks at every message sent in the server
             day = int(message.content[-1])
             await message.channel.send('Day has been set to ' + str(day) + '. Please use `!divide` to send day dividers')
 
-client.run('NjUxMTg3MjE2OTMyMDEyMDQz.XeWSEQ.v5ffOjdTZ0pJ7QMdMgdj0cesm-k')
+client.run('insert key here')

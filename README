@@ -1,5 +1,8 @@
 A simple discord bot that adds day dividers in selected channels, for use in Blood on the Clocktower games. 
 
+Add the bot to your server!
+https://discordapp.com/api/oauth2/authorize?client_id=651187216932012043&permissions=0&scope=bot
+
 Commands:
 !setup (admin) : allows channels and categories to be added and removed. !!WARNING!! Make sure the first time this is used is in an admin-only channel. All admin commands, including this one, will only be accessible from that channel. Note that any user can use any command, as long as they can send messages in the channel. 
 !add : use in any channel after using !setup. It is added to the list of channels to be divided. 
