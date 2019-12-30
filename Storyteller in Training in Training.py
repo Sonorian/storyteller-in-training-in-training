@@ -42,18 +42,32 @@ async def on_message(message):#looks at every message sent in the server
         if message.content.startswith('!catadd'):
                 if message.channel.category:#if the channel belongs to a category
                     cats = message.channel.category.text_channels
-                    for chan in cats:
-                        if chan not in channels:
-                            channels.append(chan)#adds each channel that isn't already on the list
-                    await message.channel.send('All channels in category `' + str(message.channel.category) + '` have been added.')
+                    for ch in cats:
+                        if ch not in channels:
+                            channels.append(ch)#adds each channel that isn't already on the list
+                    await message.channel.send('All channels in category `' + message.channel.category.name + '` have been added.')
                 else:
                     await message.channel.send('This channel does not appear to be part of a category; please use `!add`')
+        if message.content.startswith('!servadd'):
+            for ch in message.guild.text_channels:
+                if ch not in channels:
+                    channels.append(ch)
+            await message.channel.send('All channels in server `' + message.guild.name + '` have been added.')
         if message.content.startswith('!remove'):
             if message.channel not in channels:
                 await message.channel.send('This channel has not been added')
                 return
             channels.remove(message.channel)#removes the channel from the list
             await message.channel.send('Removed channel `' + str(message.channel) + '`')
+        if message.content.startswith('!catrm'):
+            if message.channel.category:
+                cats = message.channel.category.text_channels
+                for ch in cats:
+                    if ch in channels:
+                        channels.remove(ch)
+                await message.channel.send('All channels in category `' + message.channel.category.name + '` have been removed.')
+            else:
+                await message.channel.send('This channel does not appear to be part of a category; please use `!remove`')
         if message.content.startswith('!done') and message.channel == setupchannel:
             await message.channel.send('Channels set. Use `!divide` to send day dividers, `!newgame` to start a new game, and `!reset [digit]` to manually set the day.')#this sometimes breaks, idk why
             state = 'dividing'
@@ -85,5 +99,24 @@ async def on_message(message):#looks at every message sent in the server
                 return
             day = int(message.content[-1])
             await message.channel.send('Day has been set to ' + str(day) + '. Please use `!divide` to send day dividers')
+        if message.content.startswith('!ping'):
+            chanOut = ''
+            first = 1
+            if channels:
+                for x in channels:
+                    if first != 1:
+                        chanOut += ', '
+                    graved = '`' + str(x) + '`'
+                    chanOut += graved
+                    first = 0
+            else:
+                chanOut = '`None`'
+            await message.channel.send('Ping received. Day dividers sending to ' + chanOut)
+            if state == 'added':
+                await message.channel.send('Please setup via `!setup`.')
+            elif state == 'channel':
+                await message.channel.send('Please finish setup, then type `!done`.')
+            elif state == 'dividing':
+                await message.channel.send('Please send day dividers via `divide`.')
 
 client.run('insert key here')
