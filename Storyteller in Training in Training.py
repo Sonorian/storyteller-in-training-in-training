@@ -29,7 +29,7 @@ async def on_message(message):#looks at every message sent in the server
             await message.channel.send('Setup channel has been set to `' + str(setupchannel) + '`. This is permanent.')#if you're new to the library [channel].send('msg') sends msg in [channel]
         if setupchannel == message.channel:
             state = 'channel'
-            await message.channel.send('Please type `!add` or `!remove` in any channel, or type `!catadd` to add all channels in its category. Type `!done` when finished')
+            await message.channel.send('Please set channels with `!add`, `!remove`, `!catadd`, `!catrm`, `!servadd`, or `!servrm`. Type `!done` when finished')
         else:
             await message.channel.send('Please use `!setup` in `' + str(setupchannel) + '`')
     if state == 'channel':
@@ -68,6 +68,9 @@ async def on_message(message):#looks at every message sent in the server
                 await message.channel.send('All channels in category `' + message.channel.category.name + '` have been removed.')
             else:
                 await message.channel.send('This channel does not appear to be part of a category; please use `!remove`')
+        if message.content.startswith('!servrm'):
+            channels = []
+            await message.channel.send('All channels in server `' + message.guild.name + '` have been removed.')
         if message.content.startswith('!done') and message.channel == setupchannel:
             await message.channel.send('Channels set. Use `!divide` to send day dividers, `!newgame` to start a new game, and `!reset [digit]` to manually set the day.')#this sometimes breaks, idk why
             state = 'dividing'
@@ -98,7 +101,7 @@ async def on_message(message):#looks at every message sent in the server
                 await message.channel.send('Please enter a valid digit')
                 return
             day = int(message.content[-1])
-            await message.channel.send('Day has been set to ' + str(day) + '. Please use `!divide` to send day dividers')
+            await message.channel.send('The next day to be sent will be Day ' + str(day) + '. Please use `!divide` to send day dividers')
         if message.content.startswith('!ping'):
             chanOut = ''
             first = 1
