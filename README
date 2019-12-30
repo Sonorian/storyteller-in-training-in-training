@@ -8,9 +8,12 @@ Commands:
 !add : use in any channel after using !setup. It is added to the list of channels to be divided. 
 !remove : use in a channel that has already been added, after using !setup. It is removed from the list. 
 !catadd : use in a channel that is part of a category after using !setup. All channels in that category are added to the list. 
+!catrm : use in a channel that is part of a category after using !setup. All channels in that category are removed from the list. 
+!servadd : use after using !setup. adds all channels in the server.
 !done (admin) : use after !status. Stops !add, !remove, !addcat from functioning. Allows !divide, !newgame, !reset. 
 !divide (admin) : use after !done. Puts up a New Game or Day Divider in each marked category. Automatically counts up. 
 !newgame (admin) : use after !done. Sets the day to 0, making the next !divide send New Game dividers. 
 !reset [integer] (admin) : use after !done. Sets the day, and the next !divide, to [integer]. Note that it cannot handle days >9. 
+!ping (admin) : gets the status of the bot. 
 
-Questions? Complaints? Want to whine about storytellers? Message Sonorian on git or @Sonorian#5165 on discord. 
+Questions? Complaints? Want to whine about storytellers? Message Sonorian on github or @Sonorian#5165 on discord. 
