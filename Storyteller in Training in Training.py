@@ -117,6 +117,6 @@ async def on_message(message):#looks at every message sent in the server
             elif state == 'channel':
                 await message.channel.send('Please finish setup, then type `!done`.')
             elif state == 'dividing':
-                await message.channel.send('Please send day dividers via `divide`.'
+                await message.channel.send('Please send day dividers via `divide`.')
 
 client.run('insert key here')
