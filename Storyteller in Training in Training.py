@@ -80,7 +80,7 @@ async def on_message(message):#looks at every message sent in the server
             await msgch.send('Channels set. Use `!divide` to send day dividers, `!newgame` to start a new game, and `!reset [digit]` to manually set the day.')#this sometimes breaks, idk why
             state = 'dividing'
         if msg.startswith('!stupid'):
-            role = msg.role_mentions
+            role = message.role_mentions
             if role:
                 stupid = role[0]
             else:
@@ -141,7 +141,7 @@ async def on_message(message):#looks at every message sent in the server
     if 'uwu' in msg or 'Uwu' in msg or 'UWu' in msg or 'UwU' in msg or 'uWu' in msg or 'uWU' in msg or 'uwU' in msg or 'UWU' in msg:
         await msgch.send(':BANN:***NO UWU***:dont::BANN:')#Only works in the server I use, be sure to edit this in your version
         if stupid:
-            sinner = msg.author
+            sinner = message.author
             if stupid not in sinner.roles:
                 sinner.add_roles(stupid, reason='Filthy UWUer')
 
