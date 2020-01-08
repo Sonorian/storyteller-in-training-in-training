@@ -26,19 +26,19 @@ async def on_message(message):#looks at every message sent in the server
     if message.content.startswith('!setup') and state != 'channel':
         if not setupchannel:
             setupchannel = message.channel#sets one channel to be used for all admin commands
-            await message.channel.send('Setup channel has been set to `' + str(setupchannel) + '`. This is permanent.')#if you're new to the library [channel].send('msg') sends msg in [channel]
+            await message.channel.send('Setup channel has been set to `' + setupchannel.name + '`. This is permanent.')#if you're new to the library [channel].send('msg') sends msg in [channel]
         if setupchannel == message.channel:
             state = 'channel'
             await message.channel.send('Please set channels with `!add`, `!remove`, `!catadd`, `!catrm`, `!servadd`, or `!servrm`. Type `!done` when finished')
         else:
-            await message.channel.send('Please use `!setup` in `' + str(setupchannel) + '`')
+            await message.channel.send('Please use `!setup` in `' + setupchannel.name + '`')
     if state == 'channel':
         if message.content.startswith('!add'):
             if message.channel in channels:
                 await message.channel.send('This channel has already been added')
-                return
-            channels.append(message.channel)#adds a specific channel to the list to be divided.
-            await message.channel.send('Added channel `' + str(channels[-1]) + '`')
+            else:
+                channels.append(message.channel)#adds a specific channel to the list to be divided.
+                await message.channel.send('Added channel `' + message.channel.name + '`')
         if message.content.startswith('!catadd'):
                 if message.channel.category:#if the channel belongs to a category
                     cats = message.channel.category.text_channels
@@ -58,7 +58,7 @@ async def on_message(message):#looks at every message sent in the server
                 await message.channel.send('This channel has not been added')
                 return
             channels.remove(message.channel)#removes the channel from the list
-            await message.channel.send('Removed channel `' + str(message.channel) + '`')
+            await message.channel.send('Removed channel `' + message.channel.name + '`')
         if message.content.startswith('!catrm'):
             if message.channel.category:
                 cats = message.channel.category.text_channels
@@ -104,17 +104,17 @@ async def on_message(message):#looks at every message sent in the server
             await message.channel.send('The next day to be sent will be Day ' + str(day) + '. Please use `!divide` to send day dividers')
         if message.content.startswith('!ping'):
             chanOut = ''
-            first = 1
+            first = 0
             if channels:
-                for x in channels:
-                    if first != 1:
+                for ch in channels:
+                    if first:
                         chanOut += ', '
-                    graved = '`' + str(x) + '`'
+                    graved = '`' + ch.name + '`'
                     chanOut += graved
-                    first = 0
+                    first = None
             else:
                 chanOut = '`None`'
-            await message.channel.send('Ping received. Day dividers sending to ' + chanOut)
+            await message.channel.send('Ping received.')
             if state == 'added':
                 await message.channel.send('Please setup via `!setup`.')
             elif state == 'channel':
