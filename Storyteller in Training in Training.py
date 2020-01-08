@@ -98,11 +98,11 @@ async def on_message(message):#looks at every message sent in the server
                 await chan.send(div)#puts the day divider in every channel slated to be divided
             day += 1
             if stupid:
-                for player in guild.members:
+                for player in message.guild.members:
                     if stupid in player.roles:
                         updated = player.roles
                         updated.remove(stupid)
-                        player.edit(updated, reason='A new day dawns, and all is forgiven')
+                        await player.edit(updated, reason='A new day dawns, and all is forgiven')
         if msg.startswith('!newgame'):
             if state != 'dividing':
                 await msgch.send('Please finish setup via either `!setup` or `!done`.')
@@ -143,6 +143,6 @@ async def on_message(message):#looks at every message sent in the server
         if stupid:
             sinner = message.author
             if stupid not in sinner.roles:
-                sinner.add_roles(stupid, reason='Filthy UWUer')
+                await sinner.add_roles(stupid, reason='Filthy UWUer')
 
 client.run('insert key here')
