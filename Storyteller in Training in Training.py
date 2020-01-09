@@ -103,7 +103,7 @@ async def on_message(message):#looks at every message sent in the server
                     if stupid in player.roles:
                         updated = player.roles
                         updated.remove(stupid)
-                        await player.edit(roles(updated), reason='A new day dawns, and all is forgiven')#Note: currently does not appear to work. also does not appear to affect function.
+                        await player.edit(roles = updated, reason='A new day dawns, and all is forgiven')
         if msg.startswith('!newgame'):
             if state != 'dividing':
                 await msgch.send('Please finish setup via either `!setup` or `!done`.')
