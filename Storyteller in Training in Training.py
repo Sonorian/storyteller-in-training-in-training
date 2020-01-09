@@ -103,7 +103,7 @@ async def on_message(message):#looks at every message sent in the server
                     if stupid in player.roles:
                         updated = player.roles
                         updated.remove(stupid)
-                        await player.edit(roles(updated), reason='A new day dawns, and all is forgiven')#Note: currently does not appear to work. also does not appear to affect function. 
+                        await player.edit(roles(updated), reason='A new day dawns, and all is forgiven')#Note: currently does not appear to work. also does not appear to affect function.
         if msg.startswith('!newgame'):
             if state != 'dividing':
                 await msgch.send('Please finish setup via either `!setup` or `!done`.')
@@ -140,7 +140,7 @@ async def on_message(message):#looks at every message sent in the server
             elif state == 'dividing':
                 await msgch.send('Please send day dividers via `divide`.')
     if 'uwu' in msg or 'Uwu' in msg or 'UWu' in msg or 'UwU' in msg or 'uWu' in msg or 'uWU' in msg or 'uwU' in msg or 'UWU' in msg:
-        await msgch.send(':BANN:***NO UWU***:dont::BANN:')#Only works in the server I use, be sure to edit this in your version
+        await msgch.send(':BANN: ***NO UWU*** :dont: :BANN:')#Only works in the server I use, be sure to edit this in your version
         if stupid:
             sinner = message.author
             if stupid not in sinner.roles:
