@@ -140,10 +140,10 @@ async def on_message(message):#looks at every message sent in the server
             elif state == 'dividing':
                 await msgch.send('Please send day dividers via `divide`.')
     if 'uwu' in msg or 'Uwu' in msg or 'UWu' in msg or 'UwU' in msg or 'uWu' in msg or 'uWU' in msg or 'uwU' in msg or 'UWU' in msg:
-        await msgch.send(':BANN: ***NO UWU*** :dont: :BANN:')#Only works in the server I use, be sure to edit this in your version
+        await msgch.send('***NO UWU***')
         if stupid:
             sinner = message.author
             if stupid not in sinner.roles:
                 await sinner.add_roles(stupid, reason='Filthy UWUer')
 
-client.run('insert key here')
+client.run('NjUxMTg3MjE2OTMyMDEyMDQz.XeX3Rg.5qWsEoqtuxhy_YXuJvqn1kmzrY4')
