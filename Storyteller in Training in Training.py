@@ -146,4 +146,4 @@ async def on_message(message):#looks at every message sent in the server
             if stupid not in sinner.roles:
                 await sinner.add_roles(stupid, reason='Filthy UWUer')
 
-client.run('NjUxMTg3MjE2OTMyMDEyMDQz.XeX3Rg.5qWsEoqtuxhy_YXuJvqn1kmzrY4')
+client.run('insert key here')
