@@ -139,9 +139,10 @@ async def on_message(message):#looks at every message sent in the server
                 await msgch.send('Please finish setup, then type `!done`.')
             elif state == 'dividing':
                 await msgch.send('Please send day dividers via `divide`.')
-    banned = ['uwu','Uwu','UWu','UwU','uWu','uWU','uwU','UWU']
+    banned = ['uwu', 'uωu', 'uшu','u:regional_indicator_w:u']
+    cleanMsg = msg.lower().replace(" ","")
     for word in banned:
-        if word in msg:
+        if word in cleanMsg:
             await msgch.send('***NO UWU***')
             if stupid:
                 sinner = message.author
