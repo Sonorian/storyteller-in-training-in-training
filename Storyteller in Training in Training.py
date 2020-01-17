@@ -9,6 +9,9 @@ channels = []
 day = 0
 setupchannel = None
 stupid = None
+players = []
+playMsg = None
+pmChannels = []#i'll implement this someday
 
 @client.event
 async def on_ready():
@@ -20,7 +23,11 @@ async def on_message(message):#looks at every message sent in the server
     global channels
     global day
     global setupchannel
-    global stupid#asynchronous functions are hard
+    global stupid
+    global playerRole
+    global players
+    global playMsg
+    global pmChannels#asynchronous functions are hard
 
     msg = message.content
     msgch = message.channel
@@ -86,6 +93,13 @@ async def on_message(message):#looks at every message sent in the server
                 await msgch.send('Stupid role set to' + stupid.mention)
             else:
                 await msgch.send('Please mention a role.')
+        if msg.startswith('!player'):
+            role = message.role_mentions
+            if role:
+                playerRole = role[0]
+                await msgch.send('Player role set to' + playerRole.mention)
+            else:
+                await msgch.send('Please mention a role.')
     if msgch == setupchannel:
         if msg.startswith('!divide'):
             if state != 'dividing':
@@ -104,12 +118,6 @@ async def on_message(message):#looks at every message sent in the server
                         updated = player.roles
                         updated.remove(stupid)
                         await player.edit(roles = updated, reason='A new day dawns, and all is forgiven')#Note: currently does not appear to work. also does not appear to affect function.
-        if msg.startswith('!newgame'):
-            if state != 'dividing':
-                await msgch.send('Please finish setup via either `!setup` or `!done`.')
-                return
-            day = 0
-            await msgch.send('A new game has started, and the day counter has been reset. Please use `!divide` to send new game dividers')
         if msg.startswith('!reset'):
             if state != 'dividing':
                 await msgch.send('Please finish setup via either `!setup` or `!done`.')
@@ -120,18 +128,24 @@ async def on_message(message):#looks at every message sent in the server
                 return
             day = int(msg[-1])
             await msgch.send('The next day to be sent will be Day ' + str(day) + '. Please use `!divide` to send day dividers')
+        if msg.startswith('!newgame'):
+            if state != 'dividing':
+                await msgch.send('Please finish setup via either `!setup` or `!done`.')
+                return
+            if not playMsg:
+                await setupchannel.send('Please send a message containing `react here to play`. If advanced startup features are not desired, please use `!reset 0`')
+                return
+            reactions = playMsg.reactions
+            if reactions:
+                for emj in reactions:
+                    for user in await emj.users().flatten():
+                        players.append(user)
+            for user in players:
+                await user.add_roles(playerRole, reason = 'Assigned player')
+            day = 0
+            playMsg = None
+            await msgch.send('A new game has started, player roles have been assigned, and the day counter has been reset. Please use `!divide` to send new game dividers')
         if msg.startswith('!ping'):
-            #chanOut = ''
-            #first = 0
-            #if channels:
-            #    for ch in channels:
-            #        if first:
-            #            chanOut += ', '
-            #        graved = '`' + ch.name + '`'
-            #        chanOut += graved
-            #        first = None
-            #else:
-            #    chanOut = '`None`'
             await msgch.send('Ping received.')#no longer sends list of all channels - went over max message limit
             if state == 'added':#sends a status update
                 await msgch.send('Please setup via `!setup`.')
@@ -139,7 +153,9 @@ async def on_message(message):#looks at every message sent in the server
                 await msgch.send('Please finish setup, then type `!done`.')
             elif state == 'dividing':
                 await msgch.send('Please send day dividers via `divide`.')
-    banned = ['uwu', 'uωu', 'uшu','u:regional_indicator_w:u']
+    if 'react here to play' in msg.lower():
+        playMsg = message
+    banned = ['uwu', 'uωu', 'uшu','u:regional_indicator_w:u']#the emoji thing doesn't work, but whatever, it doesn't hurt
     cleanMsg = msg.lower().replace(" ","")
     for word in banned:
         if word in cleanMsg:
