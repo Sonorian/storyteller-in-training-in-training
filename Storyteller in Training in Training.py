@@ -45,6 +45,8 @@ async def on_message(message):#looks at every message sent in the server
     msg = message.content
     msgch = message.channel
 
+    #what was i going to do here?
+
     if message.author == client.user:#so it doesn't look at its own messages
         return
 
@@ -114,15 +116,11 @@ async def on_message(message):#looks at every message sent in the server
                     if ch not in pmChannels:
                         pmChannels[ch] = []
                 for ch in pmChannels:
-                    users = ch.members
-                    for user in users:
-                        for role in admin:
-                            if role in user.roles:
-                                users.remove(user)
-                                break
+                    users = [user for user in ch.members if user not in admins]
                     if len(users) != 2:
                         await ch.send('Error: Incorrect number of non-admins found')
-                    pmChannels[ch] = users
+                    await msgch.send('PM channel for {} and {}'.format(users[0], users[1]))
+                    pmChannels[ch] = [users, None, 'setup']
                 await setupchannel.send('`' + msgch.category.name + '` set as PM channels')
             else:
                 await msgch.send('This channel does not appear to be part of a category')
@@ -134,7 +132,8 @@ async def on_message(message):#looks at every message sent in the server
                     if ch not in stChannels:
                         stChannels[ch] = []
                 for ch in stChannels:
-                    users = ch.members
+
+                    '''users = ch.members
                     for user in users:
                         for role in admin:
                             if role in user.roles:
@@ -145,7 +144,7 @@ async def on_message(message):#looks at every message sent in the server
                     elif len(users) < 1:
                         await ch.send('Error: Incorrect number of non-admins found, channel will not be in use.')
                     stChannels[ch] = users[0]
-                await msg.channel.send('`' + msgch.category.name + '` set as Storyteller-Player channels')
+                await setupchannel.send('`' + msgch.category.name + '` set as Storyteller-Player channels')'''
 
         if msg.startswith('!admin'):
             admin = message.role_mentions
