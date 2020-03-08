@@ -53,12 +53,12 @@ async def on_message(message):#looks at every message sent in the server
     if msg.startswith('!setup') and state != 'channel':
         if not setupchannel:
             setupchannel = msgch#sets one channel to be used for all admin commands
-            await msgch.send('Setup channel has been set to ' + setupchannel.mention + '. This is permanent.')#if you're new to the library [channel].send('txt') sends txt in [channel]
+            await msgch.send('Setup channel has been set to {}. This is permanent.'.format(setupchannel.mention))#if you're new to the library [channel].send('txt') sends txt in [channel]
         if setupchannel == msgch:
             state = 'channel'
-            await msgch.send('Please set channels with `!add`, `!remove`, `!catadd`, `!catrm`, `!servadd`, or `!servrm`. Type `!done` when finished')
+            await msgch.send('Please set roles with `!player @player`, `!admin @admin1 @admin2`, `!stupid @stupid`. Then set channels with `!add/remove`, `!catadd/rm`, `!servadd/rm`. Type `!done` when finished.')
         else:
-            await msgch.send('Please use `!setup` in ' + setupchannel.mention)
+            await msgch.send('Please use `!setup` in {}'.format(setupchannel.mention))
 
     if state == 'channel':
         if msg.startswith('!add'):
@@ -66,7 +66,7 @@ async def on_message(message):#looks at every message sent in the server
                 await msgch.send('This channel has already been added')
             else:
                 channels.append(msgch)#adds a specific channel to the list to be divided.
-                await msgch.send('Added channel ' + msgch.mention)
+                await msgch.send('Added channel {}'.format(msgch.mention))
 
         if msg.startswith('!catadd'):
                 if msgch.category:#if the channel belongs to a category
@@ -158,6 +158,9 @@ async def on_message(message):#looks at every message sent in the server
                 await msgch.send('Stupid role set to' + stupid.mention)
             else:
                 await msgch.send('Please mention a role.')
+            for user in msggd.members:
+                if any(role in user.roles for role in admin)
+                    admins.append(user)
 
         if msg.startswith('!player'):
             role = message.role_mentions
