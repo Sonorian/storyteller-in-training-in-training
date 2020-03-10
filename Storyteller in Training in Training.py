@@ -36,6 +36,7 @@ async def on_message(message):#looks at every message sent in the server
     global stupid
     global playerRole
     global players
+    global admins
     global playMsg
     global pmChannels
     global stChannels
@@ -55,8 +56,8 @@ async def on_message(message):#looks at every message sent in the server
     if msg.startswith('!setup') and state != 'channel':
         if not setupchannel:#sets one channel to be used for all admin commands
             setupchannel = msgch
-            await msgch.send('Setup channel has been set to {}.\
-                             This is permanent.'.format(setupchannel.mention))
+            await msgch.send('Setup channel has been set to {}. '
+                             'This is permanent.'.format(setupchannel.mention))
         if setupchannel == msgch:
             state = 'channel'
             await msgch.send('Please set roles with `!player @player`, '
@@ -70,6 +71,7 @@ async def on_message(message):#looks at every message sent in the server
                              .format(setupchannel.mention))
 
     if state == 'channel':
+        #all channel-adding/removing functions
         if msg.startswith('!add'):
             if msgch in channels:
                 await msgch.send('This channel has already been added')
@@ -83,9 +85,9 @@ async def on_message(message):#looks at every message sent in the server
                     for ch in cats:
                         if ch not in channels:
                             channels.append(ch)
-                    await msgch.send('All channels in category {} '
+                    await msgch.send('All channels in category `{}` '
                                      'have been added.'
-                                     .format(msgch.category.mention))
+                                     .format(msgch.category.name))
                 else:
                     await msgch.send('This channel does not appear to be '
                                      'part of a category; please use `!add`')
@@ -110,9 +112,9 @@ async def on_message(message):#looks at every message sent in the server
                 for ch in cats:
                     if ch in channels:
                         channels.remove(ch)
-                await msgch.send('All channels in category {} '
+                await msgch.send('All channels in category `{}` '
                                  'have been removed.'
-                                 .format(msgch.category.mention))
+                                 .format(msgch.category.name))
             else:
                 await msgch.send('This channel does not appear to be '
                                  'part of a category; please use `!remove`')
@@ -139,13 +141,15 @@ async def on_message(message):#looks at every message sent in the server
                     users = [user for user in ch.members if user not in admins]
                     if len(users) != 2:
                         await ch.send('Error: Incorrect number '
-                                      'of non-admins found')
-                    await msgch.send('PM channel for {} and {}'
+                                      'of non-admins found in {}'
+                                      .format(ch.mention))
+                    else:
+                        await msgch.send('PM channel for {} and {}'
                                      .format(users[0].display_name,
                                      users[1].display_name))
-                    pmChannels[ch] = [users, None, 'setup']
-                await setupchannel.send('{} set as PM channels'
-                                        .format(msgch.category.mention))
+                        pmChannels[ch] = [users, None, 'setup']
+                await setupchannel.send('`{}` set as PM channels'
+                                        .format(msgch.category.name))
             else:
                 await msgch.send('This channel does not appear '
                                  'to be part of a category')
@@ -165,24 +169,25 @@ async def on_message(message):#looks at every message sent in the server
                         stChannels[ch] = []
                 for ch in stChannels:
                     users = [user for user in ch.members if user not in admins]
-                        '''!!!WARNING!!! - When using this command,
-                        make sure to remove all storytellers in training.
-                        '''
-                    if len(users) != 1:
+                        #!!!WARNING!!! - When using this command,
+                        #make sure to remove all storytellers in training.
+                    if len(users) > 1:
                         await ch.send('Error: Incorrect number of '
                                       'non-admins found, defaulting to `{}`'
                                       .format(users[0].display_name))
-                    stChannels[ch] = [users[0], None]
-                await message.channel.send('{} set as '
-                                           'Storyteller-Player channels'
-                                           .format(msgch.category.mention))
+                    elif len(users) == 1:
+                        stChannels[ch] = [users[0], None]
+
+                await msgch.send('`{}` set as '
+                                 'Storyteller-Player channels'
+                                 .format(msgch.category.name))
 
         if msg.startswith('!admin'):
             admin = message.role_mentions
             if admin:
                 await msgch.send('Admin roles set.')
             for user in msggd.members:
-                if any(role in user.roles for role in admin)
+                if any(role in user.roles for role in admin):
                     admins.append(user)
 
         if msg.startswith('!stupid'):
@@ -200,6 +205,11 @@ async def on_message(message):#looks at every message sent in the server
                 await msgch.send('Player role set to' + playerRole.mention)
             else:
                 await msgch.send('Please mention a role.')
+
+        if msg.startswith('!pladd'):
+            pls = message.mentions
+            for pl in pls:
+                players.append(pl)
 
     if msgch == setupchannel:
         if msg.startswith('!divide'):
@@ -236,10 +246,9 @@ async def on_message(message):#looks at every message sent in the server
                         await player.edit(roles = updated,
                                           reason='A new day dawns, '
                                           'and all is forgiven')
-                                          '''Note: currently does not
-                                          appear to work. Also does not
-                                          appear to affect function.
-                                          '''
+                                          #Note: currently does not
+                                          #appear to work. Also does not
+                                          #appear to affect function.
 
         if msgch in pmChannels:
             init = msg.author
@@ -267,7 +276,7 @@ async def on_message(message):#looks at every message sent in the server
                     consent[msgch] = ['wait', reci]
                     await msgch.set_permissions(init, overwrite = deny)
                     await msgch.set_permissions(reci, overwrite = deny)
-            if consent[msgch][0] == 'wait'
+            if consent[msgch][0] == 'wait':
                 if preconsent[reci][1] == 'given':
                     consent[msgch] = ['given']
                     await msgch.set_permissions(init, overwrite = allow)
@@ -288,9 +297,8 @@ async def on_message(message):#looks at every message sent in the server
                              .format(str(day)))
 
         if msg.startswith('!tick'):
-            '''provides no feedback. This is intentional,
-            as it's a temporary fix to the limits of !reset.
-            '''
+            #provides no feedback. This is intentional,
+            #as it's a temporary fix to the limits of !reset.'
             if state == dividing:
                 day += 1
 
@@ -321,17 +329,23 @@ async def on_message(message):#looks at every message sent in the server
                 await user.add_roles(playerRole, reason = 'Assigned player')
             for user in msggd.members:
                 admins = []
-                if any(role in user.roles for role in admin)
+                if any(role in user.roles for role in admin):
                     admins.append(user)
             for ch in stChannels:
+                if not stChannels[ch]:
+                    continue
                 if stChannels[ch][0] in players:
                     stChannels[ch][1] = 1
             for ch in stChannels:
+                if not stChannels[ch]:
+                    continue
                 ch0 = stChannels[ch][0]
                 if ch0 in players:
                     for pl in stChannels:
+                        if not stChannels[pl]:
+                            continue
                         pl0 = stChannels[pl][0]
-                        if (ch0 != pl0 and pl0 in players):
+                        if ch0 != pl0 and pl0 in players:
                             preconsent[ch0] = {}
                             preconsent[ch0][pl0] = []
                     await ch.send('Please react to whoever '
@@ -340,6 +354,8 @@ async def on_message(message):#looks at every message sent in the server
                         note = await ch.send(pl.display_name)
                         preconsent[ch][pl] = [note, None]
             for ch in pmChannels:
+                if not pmChannels[ch]:
+                    continue
                 if (pmChannels[ch][0] in players
                         and pmChannels[ch][1] in players):
                     consent[ch] = ['ng']
@@ -364,10 +380,13 @@ async def on_message(message):#looks at every message sent in the server
         await setupchannel.send('Advanced newgame available '
                                 'once players have reacted')
 
-    banned = ['uwu', 'uωu', 'uшu','u:regional_indicator_w:u']
-    cleanMsg = msg.lower().replace(" ","")
+    banned = ['uwu', 'uωu', 'uшu']
+    delim = [' ','.',',','-','_','+','|','/']
+    clean_msg = msg.lower()
+    for char in delim:
+        clean_msg = clean_msg.replace(char,'')
     for word in banned:
-        if word in cleanMsg:
+        if word in clean_msg:
             await msgch.send('***NO UWU***')
             if stupid:
                 sinner = message.author
@@ -375,20 +394,25 @@ async def on_message(message):#looks at every message sent in the server
                     await sinner.add_roles(stupid, reason='Filthy UWUer')
 
 async def on_reaction_add(reaction, user):
-    msg = reaction.message
-    msgch = msg.channel
+    #currently does nothing
+    message = reaction.message
+    msg = message.content
+    msgch = message.channel
     allow = discord.PermissionsOverwrite
+    deny = discord.PermissionsOverwrite
     allow.send_messages = True
+    deny.send_messages = False
     for ls in preconsent:
-        if msg == preconsent[ls][0]:
+        if message == preconsent[ls][0]:
             preconsent[ls][1] = 'given'
-    if consent[msgch][0] == 'wait'
-        if msg == pmInit[msgch] and user == consent[msgch][1]:
-            consent[msgch] = ['given']
-            await msgch.set_permissions(pmChannels[msgch][0],
-                                        overwrite = allow)
-            await msgch.set_permissions(pmChannels[msgch][1],
-                                        overwrite = allow)
+    if consent[msgch]:
+        if consent[msgch][0] == 'wait':
+            if message == pmInit[msgch] and user == consent[msgch][1]:
+                consent[msgch] = ['given']
+                await msgch.set_permissions(pmChannels[msgch][0],
+                                            overwrite = allow)
+                await msgch.set_permissions(pmChannels[msgch][1],
+                                            overwrite = allow)
 
 
 
