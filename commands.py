@@ -1,3 +1,5 @@
+import discord
+
 class Error(Exception):
     """Base class for exceptions for this module"""
     pass
@@ -345,3 +347,9 @@ def ping(msgch, day, channels, players, admins):
         msgch.send('Current players are {}'.format(txlist(players)))
     if admins:
         msgch.send('Current admins are {}'.format(txlist(admins)))
+
+def pladd(players, message):
+    pls = message.mentions
+    for pl in pls:
+        players.append(pl)
+    return players
