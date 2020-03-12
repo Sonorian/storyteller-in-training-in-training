@@ -1,5 +1,6 @@
 import discord#https://discordpy.readthedocs.io/en/latest/index.html
 import logging
+import commands as cmd
 
 logging.basicConfig(level=logging.INFO)
 client = discord.Client()#c/p from above link, idk what it does
@@ -250,41 +251,6 @@ async def on_message(message):#looks at every message sent in the server
                                           #appear to work. Also does not
                                           #appear to affect function.
 
-        if msgch in pmChannels:
-            init = msg.author
-            allow = discord.PermissionsOverwrite
-            deny = discord.PermissionsOverwrite
-            allow.send_messages = True
-            deny.send_messages = False
-            if pmChannels[msgch][0] == init:
-                reci = pmChannels[msgch][1]
-            elif pmChannels[msgch][1] == init:
-                reci = pmChannels[msgch][0]
-            else:
-                return
-            if consent[msgch][0] == 'init':
-                if (' ' in msg
-                        or len(message.mentions !=1
-                        or message.mentions[0] != reci)):
-                    await msg.delete()
-                    warning = await msgch.send('{}, please only mention '
-                                               'the other player.'
-                                               .format(init.mention))
-                    await warning.delete(delay = 5)
-                else:
-                    pmInit[msgch] = msg
-                    consent[msgch] = ['wait', reci]
-                    await msgch.set_permissions(init, overwrite = deny)
-                    await msgch.set_permissions(reci, overwrite = deny)
-            if consent[msgch][0] == 'wait':
-                if preconsent[reci][1] == 'given':
-                    consent[msgch] = ['given']
-                    await msgch.set_permissions(init, overwrite = allow)
-                    await msgch.set_permissions(reci, overwrite = allow)
-                    await pmInit[msgch].delete()
-                    pmInit[msgch] = None
-                    consent[msgch] = ['given']
-
         if msg.startswith('!reset'):
             if state != 'dividing':
                 await msgch.send('Please finish setup via '
@@ -379,6 +345,42 @@ async def on_message(message):#looks at every message sent in the server
         playMsg = message
         await setupchannel.send('Advanced newgame available '
                                 'once players have reacted')
+
+    if adv and pmChannels:
+        if msgch in pmChannels:#what the actual fuck was this supposed to be
+            init = msg.author
+            allow = discord.PermissionsOverwrite
+            deny = discord.PermissionsOverwrite
+            allow.send_messages = True
+            deny.send_messages = False
+            if pmChannels[msgch][0] == init:
+                reci = pmChannels[msgch][1]
+            elif pmChannels[msgch][1] == init:
+                reci = pmChannels[msgch][0]
+            else:
+                return
+            if consent[msgch][0] == 'init':
+                if (' ' in msg
+                        or len(message.mentions !=1
+                        or message.mentions[0] != reci)):
+                    await msg.delete()
+                    warning = await msgch.send('{}, please only mention '
+                                               'the other player.'
+                                               .format(init.mention))
+                    await warning.delete(delay = 5)
+                else:
+                    pmInit[msgch] = msg
+                    consent[msgch] = ['wait', reci]
+                    await msgch.set_permissions(init, overwrite = deny)
+                    await msgch.set_permissions(reci, overwrite = deny)
+            if consent[msgch][0] == 'wait':
+                if preconsent[reci][1] == 'given':
+                    consent[msgch] = ['given']
+                    await msgch.set_permissions(init, overwrite = allow)
+                    await msgch.set_permissions(reci, overwrite = allow)
+                    await pmInit[msgch].delete()
+                    pmInit[msgch] = None
+                    consent[msgch] = ['given']
 
     banned = ['uwu', 'uωu', 'uшu']
     delim = [' ','.',',','-','_','+','|','/']
