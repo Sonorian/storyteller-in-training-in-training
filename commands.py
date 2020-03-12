@@ -266,7 +266,7 @@ def tick(day):
     day += 1
     return day
 
-def newgame(playMsg, players, message):
+def newgame(playMsg, playerRole, admin, players, message):
     """Resets day, sets admins, starts preconsent system"""
     msgch = message.channel
     adv = None
@@ -345,4 +345,3 @@ def ping(msgch, day, channels, players, admins):
         msgch.send('Current players are {}'.format(txlist(players)))
     if admins:
         msgch.send('Current admins are {}'.format(txlist(admins)))
-    
