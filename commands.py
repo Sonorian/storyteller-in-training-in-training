@@ -151,7 +151,7 @@ def pmcatadd(admins, msgch, pmChannels):
                          'to be part of a category')
     return pmChannels
 
-def stcatadd(msgch, admins, stChannels):
+def stcatadd(admins, msgch, stChannels):
     if not admins:
         await message.channel.send('Please add admins - '
                                    '`!admin` will add all current admins,'
@@ -193,7 +193,7 @@ def admin(message, admin, admins):
             admins.append(user)
     return admin, admins
 
-def player(message):
+def player(message, player):
     msgch = message.channel
     role = message.role_mentions
     if role:
@@ -203,7 +203,7 @@ def player(message):
         await msgch.send('Please mention a role.')
     return player
 
-def stupid(message):
+def stupid(message, stupid):
     msgch = message.channel
     role = message.role_mentions
     if role:
@@ -253,8 +253,7 @@ def reset(message):
     try:
         day = int(clean)
     except TypeError:
-        await message.channel.send('Please use the format `!reset [number]` '
-                                   'Day has been set to 0')
+        await message.channel.send('Please use the format `!reset [number]`')
         day = 0
     await message.channel.send('The next day to be sent will be Day {}. '
                                'Please use `!divide` to send day dividers'
