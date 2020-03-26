@@ -49,6 +49,7 @@ async def on_message(message):
     global pmInit
     global pmMessages
     global adv#asynchronous functions are hard
+    to_send = {}
 
     msg = message.content
     msgch = message.channel
@@ -164,11 +165,14 @@ async def on_message(message):
         clean_msg = clean_msg.replace(char,'')
     for word in banned:
         if word in clean_msg:
-            await msgch.send('***NO UWU***')
+            to_send['NO UWU'] = msgch
             if stupid:
                 sinner = message.author
                 if stupid not in sinner.roles:
                     await sinner.add_roles(stupid, reason='Filthy UWUer')
+
+    for msgout in to_send:
+        await to_send[msgout].send(msgout)
 
 async def on_reaction_add(reaction, user):
     #currently does nothing
@@ -190,7 +194,5 @@ async def on_reaction_add(reaction, user):
                                             overwrite = allow)
                 await msgch.set_permissions(pmChannels[msgch][1],
                                             overwrite = allow)
-
-
 
 client.run('insert key here')#don't put your key in here and commit, dumbass

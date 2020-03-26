@@ -41,16 +41,16 @@ if __name__ == '__main__':
     raise UseError
 
 def setup(setupchannel, msgch):
+    to_send = {}
     """sets one channel to be used for all admin commands"""
     if not setupchannel:
         setupchannel = msgch
-        await msgch.send('Setup channel has been set to {}. '
-                         'This is permanent.'.format(setupchannel.mention))
-        await msgch.send('Please set roles with `!player @player`, '
-                         '`!admin @admin1 @admin2`, '
-                         '`!stupid @stupid`. '
-                         'Then set channels with `!add/remove`, '
-                         '`!catadd/rm`, `!servadd/rm`.')
+        to_send[('Setup channel has been set to {}. This is permanent.'
+                 .format(setupchannel.mention))] = msgch
+        to_send[('Please set roles with `!player @player`, '
+                 '`!admin @admin1 @admin2`, `!stupid @stupid`. '
+                 'Then set channels with `!add/remove`, '
+                 '`!catadd/rm`, `!servadd/rm`.')] =
     else:
         try:
             await msgch.send('Setup Channel already set to {}'
@@ -59,7 +59,7 @@ def setup(setupchannel, msgch):
                               'Command not used in setup channel')
         except ChannelError:
             pass
-    return setupchannel
+    return setupchannel, to_send
 
 def add(msgch, channels):
     """Adds a single channel to be divided"""
@@ -167,10 +167,10 @@ def stcatadd(admins, msgch, stChannels):
                 stChannels[ch] = []
         for ch in stChannels:
             users = [user for user in ch.members if user not in admins]
-                """!!!WARNING!!! - When using this command,
-                make sure to remove all storytellers in training.
-                It's a pain to use this multiple times between rounds.
-                """
+            """!!!WARNING!!! - When using this command,
+            make sure to remove all storytellers in training.
+            It's a pain to use this multiple times between rounds.
+            """
             if len(users) > 1:
                 await ch.send('Error: Incorrect number of '
                               'non-admins found, defaulting to `{}`'
@@ -241,10 +241,10 @@ def divide(day, channels, adv, consent):
                 await player.edit(roles = updated,
                                   reason='A new day dawns, '
                                   'and all is forgiven')
-                                  """Note: currently does not
-                                  appear to work. Also does not
-                                  appear to affect function.
-                                  """
+        """Note: currently does not
+        appear to work. Also does not
+        appear to affect function.
+        """
     return pmMessages
 
 def reset(message):
