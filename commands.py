@@ -147,7 +147,7 @@ def pmcatadd(admins, msgch, pmChannels, to_send={}):
     """
     if not admins:
         to_send[msgch] = ['Please add admins - '
-                          '`!admin` will add all current admins,'
+                          '`!admin` will add all current admins, '
                           'so remove all Storytellers in Training '
                           'first (except me)']
     elif not msgch.category:
@@ -203,7 +203,7 @@ def stcatadd(admins, msgch, stChannels, to_send={}):
     """
     if not admins:
         to_send[msgch] = ['Please add admins - '
-                          '`!admin` will add all current admins,'
+                          '`!admin` will add all current admins, '
                           'so remove all Storytellers in Training '
                           'first (except me)']
     elif not msgch.category:
