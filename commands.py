@@ -75,7 +75,7 @@ def catadd(msgch, channels, to_send={}):
             channels.append(ch)
     to_send[msgch] = ['All channels in category `{}` have been added.'
                       .format(msgch.category.name)]
-    return channels
+    return channels, to_send
 
 def servadd(msggd, channels, to_send={}):
     """Adds all channels to be divided"""
@@ -84,7 +84,7 @@ def servadd(msggd, channels, to_send={}):
             channels.append(ch)
     to_send[msgch] = ['All channels in server `{}` have been added.'
                       .format(msggd.name)]
-    return channels
+    return channels, to_send
 
 def remove(msgch, channels, to_send={}):
     """Removes a single channel"""
@@ -93,7 +93,7 @@ def remove(msgch, channels, to_send={}):
         return
     channels.remove(msgch)#removes the channel from the list
     to_send[msgch] = ['Removed channel {}'.format(msgch.mention)]
-    return
+    return channels, to_send
 
 def catrm(msgch, channels, to_send={}):
     """Removes a category"""
@@ -107,7 +107,7 @@ def catrm(msgch, channels, to_send={}):
     else:
         to_send[msgch] = ['This channel does not appear to be '
                           'part of a category; please use `!remove`']
-    return channels
+    return channels, to_send
 
 def servrm(msgch, to_send={}):
     """Wipes the list of channels"""
@@ -227,7 +227,7 @@ def stcatadd(admins, msgch, stChannels, to_send={}):
         to_send[msgch] = ['`{}` set as '
                           'Storyteller-Player channels'
                           .format(msgch.category.name)]
-    return stChannels
+    return stChannels, to_send
 
 def admin(message, setupchannel, admin, admins, to_send={}):
     """Sets admin roles and finds those members"""
@@ -242,7 +242,7 @@ def admin(message, setupchannel, admin, admins, to_send={}):
         for user in message.guild.members:
             if any(role in user.roles for role in admin):
                 admins.append(user)
-    return admin, admins
+    return admin, admins, to_send
 
 def player(message, setupchannel, player, to_send={}):
     """Sets player role"""
@@ -270,8 +270,7 @@ def stupid(message, setupchannel, stupid, to_send={}):
         to_send[msgch] = ['Stupid role set to {}'.format(stupid.mention)]
     return stupid, to_send
 
-def divide(message, setupchannel, day, channels, adv, consent, stupid,
-           to_send={}):
+def divide(message, setupchannel, day, channels, adv, consent, to_send={}):
     """Sends day dividers, as well as reset PM system and stupid roles"""
     msgch = message.channel
     if msgch == setupchannel:
@@ -293,7 +292,7 @@ def divide(message, setupchannel, day, channels, adv, consent, stupid,
                 consent[ch] = ['init']
     return day, consent, to_send
 
-def reset(message, to_send={}):
+def reset(day, message, to_send={}):
     """Manually change the day"""
     msgch = message.channel
     to_send[msgch] = []
@@ -302,11 +301,10 @@ def reset(message, to_send={}):
         day = int(clean)
     except TypeError:
         to_send[msgch].append('Please use the format `!reset [number]`')
-        day = 0
     to_send[msgch].append('The next day to be sent will be Day {}. '
                           'Please use `!divide` to send day dividers'
                           .format(day))
-    return day
+    return day, to_send
 
 def tick(day):
     """Manually increment the day.
@@ -384,6 +382,7 @@ def ping(msgch, day, channels, players, admins, to_send={}):
         to_send[msgch].append('Current players are {}'.format(txlist(players)))
     if admins:
         to_send[msgch].append('Current admins are {}'.format(txlist(admins)))
+    return to_send
 
 def pladd(players, message):
     pls = message.mentions

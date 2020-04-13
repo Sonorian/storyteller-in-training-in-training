@@ -54,55 +54,62 @@ async def on_message(message):
     msg = message.content
     msgch = message.channel
     msggd = message.guild
-
-
+    to_send = {}
 
     if message.author == client.user:
         return
         # Makes the bot ignore its own messages
 
     if msg.startswith('!setup'):
-        setupchannel = cmd.setup(setupchannel, msgch)
+        setupchannel, to_send = cmd.setup(setupchannel, msgch)
 
     elif msg.startswith('!add'):
-        channels = cmd.add(msgch, channels)
+        channels, to_send = cmd.add(msgch, channels)
 
     elif msg.startswith('!catadd'):
-        channels = cmd.catadd(msgch, channels)
+        channels, to_send = cmd.catadd(msgch, channels)
 
     elif msg.startswith('!servadd'):
-        channels = cmd.servadd(msggd, channels)
+        channels, to_send = cmd.servadd(msggd, channels)
 
     elif msg.startswith('!remove'):
-        channels = cmd.remove(msgch, channels)
+        channels, to_send = cmd.remove(msgch, channels)
 
     elif msg.startswith('!catrm'):
-        channels = cmd.catrm(msgch, channels)
+        channels, to_send = cmd.catrm(msgch, channels)
 
     elif msg.startswith('!servrm'):
-        channels = cmd.servrm(msgch)
+        channels, to_send = cmd.servrm(msgch)
+
+    elif msg.startswith('!pmadd'):
+        pmChannels, to_send = cmd.pmadd(message, pmChannels)
 
     elif msg.startswith('!pmcatadd'):
-        pmChannels = cmd.pmcatadd(admins, msgch, pmChannels)
+        pmChannels, to_send = cmd.pmcatadd(admins, msgch, pmChannels)
+
+    elif msg.startswith('!stadd'):
+        stChannels, to_send = pmadd(message, stChannels)
 
     elif msg.startswith('!stcatadd'):
-        stChannels = cmd.catadd(admins, msgch, stChannels)
+        stChannels, to_send = cmd.catadd(admins, msgch, stChannels)
 
-    if msg.startswith('!admin'):
-        admin_role, admins = cmd.admin(message, admin_role, admins)
+    elif msg.startswith('!admin'):
+        admin_role, admins, to_send = cmd.admin(message, setupchannel,
+                                                admin, admins)
 
     elif msg.startswith('!player'):
-        player_role = cmd.player(message, player_role)
+        player_role, to_send = cmd.player(message, setupchannel, player_role)
 
     elif msg.startswith('!stupid'):
-        stupid_role = cmd.stupid(message, stupid_role)
+        stupid_role, to_send = cmd.stupid(message, setupchannel, stupid_role)
 
     elif msg.startswith('!pladd'):
         players = cmd.pladd(players, message)
 
     elif msg.startswith('!divide'):
-        day = cmd.divide(day, channels, adv, consent)
-        for sinner in stupid:
+        day, consent, to_send = cmd.divide(message, setupchannel, day,
+                                           channels, adv, consent)
+        for sinner in stupid:   # reset stupid roles
             updated = sinner.roles
             updated.remove(stupid_role)
             await player.edit(roles=updated, reason=
@@ -110,7 +117,7 @@ async def on_message(message):
         stuipd = []
 
     elif msg.startswith('!reset'):
-        day = cmd.reset(day, message)
+        day, to_send = cmd.reset(day, message)
 
     elif msg.startswith('!tick'):
         day = cmd.tick(day)
@@ -125,10 +132,10 @@ async def on_message(message):
                 await user.add_roles(playerRole, reason = 'Assigned player')
         (day, playMsg, admins,
          preconsent, consent,
-         adv, to_send) = cmd.newgame(playMsg, admin, players, message)
+         adv, to_send) = cmd.newgame(playMsg, admin_role, players, message)
 
-    elif msg.startswith('!ping'):#easiest way to test if the bot is online
-        cmd.ping(day, channels, players, admins)
+    elif msg.startswith('!ping'):
+        to_send = cmd.ping(msgch, day, channels, players, admins)
 
     if 'react here to play' in msg.lower():
         playMsg = message
