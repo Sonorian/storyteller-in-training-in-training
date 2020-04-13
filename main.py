@@ -197,7 +197,7 @@ async def on_message(message):
 
     for ch in to_send:
         for ms in to_send[ch]:
-            ch.send(ms)
+            await ch.send(ms)
 
 async def on_reaction_add(reaction, user):
     #currently does nothing

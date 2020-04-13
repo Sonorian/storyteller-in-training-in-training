@@ -43,15 +43,20 @@ def setup(setupchannel, msgch, to_send={}):
     """sets one channel to be used for all admin commands"""
     if not setupchannel:
         setupchannel = msgch
-        to_send['Setup channel has been set to {}. This is permanent.'
-                .format(setupchannel.mention)] = msgch
-        to_send[msgch] = ['Please set roles with `!player @player`, '
-                          '`!admin @admin1 @admin2`, `!stupid @stupid`. '
-                          'Then set channels with `!add/remove`, '
-                          '`!catadd/rm`, `!servadd/rm`.']
+        to_send[msgch] = ['Setup channel has been set to {}. '
+                          'This is permanent.'
+                          .format(setupchannel.mention)]
+        to_send[msgch].append('Please set roles with `!player @player`, '
+                              '`!admin @admin1 @admin2`, `!stupid @stupid`. '
+                              'Then set channels with `!add/remove`, '
+                              '`!catadd/rm`, `!servadd/rm`.')
     else:
         to_send[msgch] = ['Setup Channel already set to {}'
                           .format(setupchannel.mention)]
+        to_send[msgch].append('Please set roles with `!player @player`, '
+                              '`!admin @admin1 @admin2`, `!stupid @stupid`. '
+                              'Then set channels with `!add/remove`, '
+                              '`!catadd/rm`, `!servadd/rm`.')
     return setupchannel, to_send
 
 def add(msgch, channels, to_send={}):
