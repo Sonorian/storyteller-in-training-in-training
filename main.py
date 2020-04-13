@@ -95,7 +95,7 @@ async def on_message(message):
 
     elif msg.startswith('!admin'):
         admin_role, admins, to_send = cmd.admin(message, setupchannel,
-                                                admin, admins)
+                                                admin_role, admins)
 
     elif msg.startswith('!player'):
         player_role, to_send = cmd.player(message, setupchannel, player_role)
