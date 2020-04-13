@@ -40,9 +40,10 @@ async def on_message(message):
     global day
     global setupchannel
     global admin_role
-    global stupid
+    global stupid_role
     global player_role
     global players
+    global stupid
     global admins
     global playMsg
     global pmChannels

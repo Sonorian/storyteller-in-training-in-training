@@ -53,10 +53,6 @@ def setup(setupchannel, msgch, to_send={}):
     else:
         to_send[msgch] = ['Setup Channel already set to {}'
                           .format(setupchannel.mention)]
-        to_send[msgch].append('Please set roles with `!player @player`, '
-                              '`!admin @admin1 @admin2`, `!stupid @stupid`. '
-                              'Then set channels with `!add/remove`, '
-                              '`!catadd/rm`, `!servadd/rm`.')
     return setupchannel, to_send
 
 def add(msgch, channels, to_send={}):
@@ -241,9 +237,9 @@ def admin(message, setupchannel, admin, admins, to_send={}):
     if msgch != setupchannel:
         pass
     elif not admin:
-        to_send[msgch] = 'Please mention at least one role.'
+        to_send[msgch] = ['Please mention at least one role.']
     else:
-        to_send[msgch] = 'Admin roles set.'
+        to_send[msgch] = ['Admin roles set.']
         for user in message.guild.members:
             if any(role in user.roles for role in admin):
                 admins.append(user)
