@@ -1,31 +1,33 @@
-import discord#https://discordpy.readthedocs.io/en/latest/index.html
+import discord  # https://discordpy.readthedocs.io/en/latest/index.html
 import logging
 import commands as cmd
 
 logging.basicConfig(level=logging.INFO)
-client = discord.Client()#c/p from above link, idk what it does
+client = discord.Client()   # c/p from above link, idk what it does
 
 state = 'added'
 channels = []
 day = 0
 setupchannel = None
-admin = []
-stupid = None
+stupid_role = None
+player_role = None
+admin_role = []
+stupid = []
 players = []
 admins = []
 playMsg = None
-pmChannels = {}#format: TextChannel:[User0,User1]
-stChannels = {}#format: TextChannel:[user, active]
-preconsent = {}#format: Player:{Reciever:[message,consentGiven]}
-consent = {}#format: TextChannel:[state,*Reciever]
-pmInit = {}#format: TextChannel:message
-pmMessages = []
-adv = None
+pmChannels = {}     # format: TextChannel:[User0,User1]
+stChannels = {}     # format: TextChannel:[user, active]
+preconsent = {}     # format: Player:{Player:given?}
+consent = {}        # format: TextChannel:[state,*Reciever]
+pmInit = {}         # format: TextChannel:message
+pmCount = {}        # format: Player:{Target:count}
+adv = False
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    #when this pops up in terminal you can use the bot
+    # When this pops up in terminal you can use the bot.
 
 @client.event
 async def on_message(message):
@@ -45,27 +47,25 @@ async def on_message(message):
     global playMsg
     global pmChannels
     global stChannels
-    global preconsent
     global pmInit
-    global pmMessages
-    global adv#asynchronous functions are hard
-    to_send = {}
+    global pmCount
+    global adv  # asynchronous functions are hard
 
     msg = message.content
     msgch = message.channel
     msggd = message.guild
 
-    #what was i going to do here?
 
-    if message.author == client.user:#so it doesn't look at its own messages
+
+    if message.author == client.user:
         return
+        # Makes the bot ignore its own messages
 
     if msg.startswith('!setup'):
         setupchannel = cmd.setup(setupchannel, msgch)
 
     elif msg.startswith('!add'):
         channels = cmd.add(msgch, channels)
-
 
     elif msg.startswith('!catadd'):
         channels = cmd.catadd(msgch, channels)
@@ -80,7 +80,7 @@ async def on_message(message):
         channels = cmd.catrm(msgch, channels)
 
     elif msg.startswith('!servrm'):
-        channels = cmd.servrm()
+        channels = cmd.servrm(msgch)
 
     elif msg.startswith('!pmcatadd'):
         pmChannels = cmd.pmcatadd(admins, msgch, pmChannels)
@@ -95,13 +95,19 @@ async def on_message(message):
         player_role = cmd.player(message, player_role)
 
     elif msg.startswith('!stupid'):
-        stupid = cmd.stupid(message, stupid)
+        stupid_role = cmd.stupid(message, stupid_role)
 
     elif msg.startswith('!pladd'):
         players = cmd.pladd(players, message)
 
     elif msg.startswith('!divide'):
-        day, pmMessages = cmd.divide(day, channels, adv, consent)
+        day = cmd.divide(day, channels, adv, consent)
+        for sinner in stupid:
+            updated = sinner.roles
+            updated.remove(stupid_role)
+            await player.edit(roles=updated, reason=
+                              'A new day dawns, and all is forgiven')
+        stuipd = []
 
     elif msg.startswith('!reset'):
         day = cmd.reset(day, message)
@@ -110,9 +116,16 @@ async def on_message(message):
         day = cmd.tick(day)
 
     elif msg.startswith('!newgame'):
+        if playMsg:
+            players = []
+            for emj in playMsg.reactions:
+                adv_reacts.append(await reaction.users().flatten())
+            players = set(adv_reacts)
+            for user in players:
+                await user.add_roles(playerRole, reason = 'Assigned player')
         (day, playMsg, admins,
-        preconsent, consent, adv) = cmd.newgame(playMsg,playerRole,admin,
-                                                players,message)
+         preconsent, consent,
+         adv, to_send) = cmd.newgame(playMsg, admin, players, message)
 
     elif msg.startswith('!ping'):#easiest way to test if the bot is online
         cmd.ping(day, channels, players, admins)
@@ -143,17 +156,17 @@ async def on_message(message):
                     warning = await msgch.send('{}, please only mention '
                                                'the other player.'
                                                .format(init.mention))
-                    await warning.delete(delay = 5)
+                    await warning.delete(delay=5)
                 else:
                     pmInit[msgch] = msg
                     consent[msgch] = ['wait', reci]
-                    await msgch.set_permissions(init, overwrite = deny)
-                    await msgch.set_permissions(reci, overwrite = deny)
+                    await msgch.set_permissions(init, overwrite=deny)
+                    await msgch.set_permissions(reci, overwrite=deny)
             if consent[msgch][0] == 'wait':
                 if preconsent[reci][1] == 'given':
                     consent[msgch] = ['given']
-                    await msgch.set_permissions(init, overwrite = allow)
-                    await msgch.set_permissions(reci, overwrite = allow)
+                    await msgch.set_permissions(init, overwrite=allow)
+                    await msgch.set_permissions(reci, overwrite=allow)
                     await pmInit[msgch].delete()
                     pmInit[msgch] = None
                     consent[msgch] = ['given']
@@ -165,14 +178,19 @@ async def on_message(message):
         clean_msg = clean_msg.replace(char,'')
     for word in banned:
         if word in clean_msg:
-            to_send['NO UWU'] = msgch
-            if stupid:
+            if not to_send[msgch]:
+                to_send[msgch] = []
+            to_send[msgch].append('***NO UWU***')
+            if stupid_role:
                 sinner = message.author
-                if stupid not in sinner.roles:
-                    await sinner.add_roles(stupid, reason='Filthy UWUer')
+                if sinner not in stupid:
+                    await sinner.add_roles(stupid_role, reason='Filthy UWUer')
+                    stupid.append(sinner)
 
-    for msgout in to_send:
-        await to_send[msgout].send(msgout)
+
+    for ch in to_send:
+        for ms in to_send[ch]:
+            ch.send(ms)
 
 async def on_reaction_add(reaction, user):
     #currently does nothing
