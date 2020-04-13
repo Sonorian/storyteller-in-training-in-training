@@ -127,8 +127,8 @@ async def on_message(message):
         if playMsg:
             players = []
             for emj in playMsg.reactions:
-                adv_reacts.append(await reaction.users().flatten())
-            players = set(adv_reacts)
+                players.append(await reaction.users().flatten())
+            players = set(players)
             for user in players:
                 await user.add_roles(playerRole, reason = 'Assigned player')
         (day, playMsg, admins,
