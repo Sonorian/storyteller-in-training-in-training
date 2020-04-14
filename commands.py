@@ -317,15 +317,16 @@ def tick(day):
 def newgame(playMsg, admin, players, message, adv=False, to_send={}):
     """Resets day, sets admins, starts preconsent system"""
     msgch = message.channel
+    to_send[msgch] = []
     if not playMsg:
-        to_send[msgch] = ['Please send a message containing '
-                          '`react here to play`. '
-                          'If advanced startup features are not desired, '
-                          'please use `!reset 0`']
+        to_send[msgch].append('Please send a message containing '
+                              '`react here to play`, then send `!newgame` '
+                              'again if advanced startup features '
+                              'are desired.')
     elif not playMsg.reactions:
-        to_send[msgch] = ['Please wait for players to react. '
-                          'If advanced startup features are '
-                          'not desired, please use `!reset 0`']
+        to_send[msgch].append('Please wait for players to react, then send '
+                              '`!newgame` again if advanced startup features'
+                              'are desired.')
     else:
         adv = True
         for user in message.guild.members:
