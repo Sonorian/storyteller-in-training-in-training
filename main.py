@@ -89,10 +89,10 @@ async def on_message(message):
         pmChannels, to_send = cmd.pmcatadd(admins, msgch, pmChannels)
 
     elif msg.startswith('!stadd'):
-        stChannels, to_send = pmadd(message, stChannels)
+        stChannels, to_send = cmd.pmadd(message, stChannels)
 
     elif msg.startswith('!stcatadd'):
-        stChannels, to_send = cmd.catadd(admins, msgch, stChannels)
+        stChannels, to_send = cmd.stcatadd(admins, msgch, stChannels)
 
     elif msg.startswith('!admin'):
         admin_role, admins, to_send = cmd.admin(message, setupchannel,
