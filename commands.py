@@ -138,7 +138,7 @@ def pmcatadd(admins, msgch, pmChannels, to_send={}):
                     The channel the command was used in.
     pmChannels  {discord.TextChannel:[discord.Member, discord.Member]}
                     List of PM channels.
-    to_send     {discord.TextChannel:['']}
+    to_send     {discord.TextChannel:[str]}
                     Dict of channels and msgs to be sent. (Default {})
 
     Returns:
